@@ -1,0 +1,9 @@
+services:
+  js-http:  
+    image: deanayalon/codecrafters:js-http
+    container_name: js-http
+    build: .
+    ports:
+      - 4221:4221
+    volumes:
+      - .:/app
