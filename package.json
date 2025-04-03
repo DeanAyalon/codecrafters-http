@@ -7,15 +7,27 @@
         "email": "dev@deanayalon.com",
         "url": "https://github.com/deanayalon"
     },
-    "keywords": ["build-your-own-x", "http"],
-    "license": "MIT",
-    
-    "type": "module",
-    "main": "main.js",
-
-    "scripts": {
-        "dev": "node app/main.js",
-        "start": "node app/main.js"
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/deanayalon/codecrafters-http.git"
     },
-    "dependencies": {}
+    "bugs": {
+        "email": "dev@deanayalon.com",
+        "url": "https://github.com/deanayalon/codecrafters-http/issues"
+    },
+    "license": "MIT",
+    "type": "module",
+    "main": "app/main.js",
+    "scripts": {
+        "build": "tsc",
+        "start": "node app/main.js",
+        "dev": "npm run build & npm run start"
+    },
+    "dependencies": {
+        "net": "^1.0.2"
+    },
+    "devDependencies": {
+        "@types/node": "^22.14.0",
+        "typescript": "^5.8.2"
+    }
 }
