@@ -1,9 +1,13 @@
 services:
   js-http:  
-    image: deanayalon/codecrafters:http-ts
     container_name: http-ts
+    image: deanayalon/codecrafters:http-ts
     build: .
+    develop:
+      watch:
+        - path: ./src
+          action: rebuild
+    stop_grace_period: 0s
     ports:
       - 4221:4221
-    volumes:
-      - .:/app
+    # entrypoint: ls
