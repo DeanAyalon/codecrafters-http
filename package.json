@@ -1,15 +1,20 @@
 {
-    "name": "@codecrafters/build-your-own-http-server",
-    "version": "1.0.0",
-    "description": "Build your own HTTP-Server challenge, from CodeCrafters",
+    "name": "@deanayalon/codecrafters-http-js",
+    "version": "0.1",
+    "description": "CodeCrafters' HTTP server in JavaScript",
+    "author": {
+        "name": "Dean Ayalon",
+        "email": "dev@deanayalon.com",
+        "url": "https://github.com/deanayalon"
+    },
+    "keywords": ["build-your-own-x", "http"],
+    "license": "MIT",
+    
+    "type": "module",
     "main": "main.js",
+
     "scripts": {
         "dev": "node app/main.js"
     },
-    "keywords": [
-        "build-your-own-x"
-    ],
-    "author": "",
-    "license": "MIT",
     "dependencies": {}
 }
