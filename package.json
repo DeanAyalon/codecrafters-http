@@ -21,7 +21,8 @@
     "scripts": {
         "build": "tsc",
         "start": "node app/main.js",
-        "dev": "npm run build & npm run start"
+        "dev": "npm run build & npm run start",
+        "test": "codecrafters test"
     },
     "dependencies": {
         "net": "^1.0.2"
