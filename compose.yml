@@ -7,7 +7,10 @@ services:
       watch:
         - path: ./src
           action: rebuild
+        - path: ./Dockerfile
+          action: rebuild
     stop_grace_period: 0s
     ports:
       - 4221:4221
-    # entrypoint: ls
+    volumes:
+      - ./files:/app/files/

@@ -24,9 +24,6 @@
         "dev": "npm run build & npm run start",
         "test": "codecrafters test"
     },
-    "dependencies": {
-        "net": "^1.0.2"
-    },
     "devDependencies": {
         "@types/node": "^22.14.0",
         "typescript": "^5.8.2"
