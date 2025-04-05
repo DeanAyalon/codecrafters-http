@@ -19,4 +19,3 @@ FROM base
 COPY --from=compile /app/app ./app
 
 ENTRYPOINT [ "node", "app/main.js" ]
-CMD [ "/app/files" ]
