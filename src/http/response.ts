@@ -1,6 +1,7 @@
-import { Socket } from 'net'
 import { STATUS_CODES } from 'http'
 import { Buffer } from 'buffer'
+
+import { encode } from '../encode.js'
 
 const version = 1.1,
     contentType = {
@@ -33,22 +34,8 @@ export class Response {
         return headers.join('\r\n')
     }
     payloadBuffer() { 
-        return Buffer.isBuffer(this.payload) ? this.payload : Buffer.from(this.payload)
+        let buffer = Buffer.isBuffer(this.payload) ? this.payload : Buffer.from(this.payload)
+        if (this._encoding) buffer = encode(buffer, this._encoding)
+        return buffer    
     }
-}
-
-export type ResponseOptions = Partial<{ encoding: string }>
-export type Respond = (code: number | string, payload?) => void
-export function respond(socket: Socket, code: number | string, payload?, options?: ResponseOptions) {
-    console.log('->', socket.remoteAddress, code, payload)
-    const response = new Response(code, payload)
-    if (options?.encoding) response.encoding = options.encoding
-    // response.encoding = 'utf-8'
-    
-    const headers = response.headers(), body = response.payloadBuffer()
-    console.log('  ', response.contentType, response.length(), 'bytes')
-
-    socket.write(headers)
-    socket.write(body)
-    socket.end()
 }

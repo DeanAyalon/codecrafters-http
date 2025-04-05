@@ -1,24 +1,50 @@
-export abstract class Request {
-    static title(data: string) {
-        const lines = data.toString().split('\r\n'),
-            lineOne = lines[0].split(' '),
-            method = lineOne[0], url = lineOne[1],
-            path = url.split('/').filter(val => val.length > 0) // Sanitize path from empty sections
-        return { method, url, path }
+import net from 'net'
+
+import { Response } from './response.js'
+import { encodingSelection } from '../encode.js'
+
+const crlf = '\r\n'
+
+export class Request {
+    method: string  // GET/POST currently supported
+    url: string
+    path: string[]
+    version: string // Only HTTP 1.1 implemented
+
+    private header: string
+    headers: { [header: string]: string | string[] } // Not many supported yet
+    body: string    // Only strings supported currently
+
+    constructor(data: Buffer<ArrayBufferLike>, private socket: net.Socket) {
+        // Title
+        [this.header, this.body] = data.toString().split(crlf + crlf)
+        const lines = this.header.toString().split(crlf);
+        [this.method, this.url, this.version] = lines[0].split(' ')
+        // this.method = lineOne[0], this.url = lineOne[1],
+        this.path = this.url.split('/').filter(val => val.length > 0) // Sanitize path from empty sections
+
+        // Headers
+        const headers = lines.slice(1).map(line => line.split(': '))
+        this.headers = {}
+        for (const [key, value] of headers)
+            if (this.headers[key])  // Value exists, convert/insert to array
+                if (Array.isArray(this.headers[key])) this.headers[key].push(value)
+                else this.headers[key] = [this.headers[key], value]
+            else this.headers[key] = value
     }
 
-    static headers(data: string) {
-        const lines = data.toString().split('\r\n'),
-            headerArray = lines.slice(1, lines.length - 2)
-                .map(line => line.split(': '))
-                // .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
-        const headers = {}
-        for (const [key, value] of headerArray) {
-            if (headers[key]) {
-                if (Array.isArray(headers[key])) headers[key].push(value)
-                else headers[key] = [headers[key], value]
-            } else headers[key] = value
-        }
-        return headers
+    respond(code: number | string, payload) {
+        console.log('->', this.socket.remoteAddress, code, payload)
+        const response = new Response(code, payload)
+
+        const encoding = encodingSelection(this.headers['Accept-Encoding'])
+        if (encoding) response.encoding = encoding
+
+        const headers = response.headers(), body = response.payloadBuffer()
+        console.log('  ', response.contentType, response.length(), 'bytes')
+
+        this.socket.write(headers)
+        this.socket.write(body)
+        this.socket.end()
     }
 }
