@@ -1,0 +1,16 @@
+services:
+  js-http:  
+    container_name: http-ts
+    image: deanayalon/codecrafters:http-ts
+    build: .
+    develop:
+      watch:
+        - path: ./src
+          action: rebuild
+        - path: ./Dockerfile
+          action: rebuild
+    stop_grace_period: 0s
+    ports:
+      - 4221:4221
+    volumes:
+      - ./files:/app/files/
