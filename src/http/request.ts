@@ -43,6 +43,9 @@ export class Request {
         const headers = response.headers(), body = response.payloadBuffer()
         console.log('  ', response.contentType, response.length(), 'bytes')
 
+        console.log(headers)
+        console.log(body)
+
         this.socket.write(headers)
         this.socket.write(body)
         this.socket.end()

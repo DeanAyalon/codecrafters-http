@@ -10,12 +10,12 @@ export function encodingSelection(acceptedEncodings: string | string[]) {
         encodings.push(...(line.split(',').map(encoding => encoding.toLowerCase().replace(' ', '')))))
 
     // Supported encodings
-    // if (encodings.includes('gzip')) return 'gzip' // Not yet working
+    if (encodings.includes('gzip')) return 'gzip' // Not yet working
 
     return null
 }
 
-export function encode(buffer, encoding: string) {
-    if (encoding === 'gzip') return gzipSync(buffer)
+export function encode(payload: string | Buffer, encoding: string) {
+    if (encoding === 'gzip') return gzipSync(payload)
     throw 'Unsupported encoding'
 }

@@ -17,12 +17,16 @@ export class Response {
 
     private _contentType: string
     get contentType() { return this._contentType }
-
+    
     private _encoding: string
-    set encoding(encoding: string) { this._encoding = encoding }
+    private payloadEncoded
+    set encoding(encoding: string) { 
+        this._encoding = encoding 
+        this.payloadEncoded = encode(this.payload, encoding)
+    }
 
     /** The Content-Length of the response message, in bytes */
-    length() { return Buffer.byteLength(this.payload) }
+    length() { return Buffer.byteLength(this._encoding ? this.payloadEncoded : this.payload)}
 
     headers() {
         const headers = [`HTTP/${version} ${this.code} ${STATUS_CODES[this.code]}`,
@@ -33,9 +37,13 @@ export class Response {
         headers.push('', '') // Header-body separator
         return headers.join('\r\n')
     }
-    payloadBuffer() { 
-        let buffer = Buffer.isBuffer(this.payload) ? this.payload : Buffer.from(this.payload)
-        if (this._encoding) buffer = encode(buffer, this._encoding)
-        return buffer    
+    payloadBuffer() {
+        let payload = this.encoding ? this.payloadEncoded : this.payload
+
+        if (this._encoding) payload = encode(payload, this._encoding)
+        let buffer = Buffer.isBuffer(payload) ? payload : Buffer.from(payload)
+        // if (this._encoding) buffer = encode(buffer, this._encoding)              // Encoding before or after buffering results in the same
+
+        return buffer
     }
 }
