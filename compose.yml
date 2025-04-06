@@ -1,0 +1,9 @@
+services:
+  http:
+    image: deanayalon/codecrafters-http:cpp
+    build: 
+      tags: [ghcr.io/deanayalon/codecrafters-http:cpp]
+    develop:
+      watch:
+        - path: src
+          action: rebuild
