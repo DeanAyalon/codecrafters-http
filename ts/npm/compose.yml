@@ -1,8 +1,9 @@
 services:
-  js-http:  
-    container_name: http-ts
-    image: deanayalon/codecrafters:http-ts
-    build: .
+  http:  
+    container_name: http
+    image: deanayalon/codecrafters-http:ts
+    build: 
+      tags: [ghcr.io/deanayalon/codecrafters-http:ts]
     develop:
       watch:
         - path: ./src
