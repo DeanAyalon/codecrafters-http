@@ -1,6 +1,9 @@
 # Environment
 .env
 
+# IDE
+.vscode
+
 # Prerequisites
 *.d
 

@@ -1,5 +1,6 @@
 services:
   http:
+    container_name: http-cpp
     image: deanayalon/codecrafters-http:cpp
     build: 
       tags: [ghcr.io/deanayalon/codecrafters-http:cpp]
@@ -7,3 +8,6 @@ services:
       watch:
         - path: src
           action: rebuild
+    ports:
+      - 4221:4221
+    stop_grace_period: 0s
