@@ -6,7 +6,7 @@ services:
       tags: [ghcr.io/deanayalon/codecrafters-http:ts.2]
     develop:
       watch:
-        - path: ./src
+        - path: ./app
           action: rebuild
         - path: ./Dockerfile
           action: rebuild
