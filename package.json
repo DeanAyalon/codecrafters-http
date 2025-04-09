@@ -1,11 +1,29 @@
 {
-  "name": "@codecrafters/http-server",
-  "description": "Build your own HTTP server challenge, from CodeCrafters",
-  "type": "module",
-  "scripts": {
-    "dev": "bun run app/main.ts"
-  },
-  "devDependencies": {
-    "@types/bun": "latest"
-  }
+    "name": "@deanayalon/codecrafters-http-js",
+    "version": "0.1",
+    "description": "CodeCrafters' HTTP server in TypeScript",
+    "author": {
+        "name": "Dean Ayalon",
+        "email": "dev@deanayalon.com",
+        "url": "https://github.com/deanayalon"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/deanayalon/codecrafters-http.git"
+    },
+    "bugs": {
+        "email": "dev@deanayalon.com",
+        "url": "https://github.com/deanayalon/codecrafters-http/issues"
+    },
+    "license": "MIT",
+    "type": "module",
+    "main": "app/main.js",
+    "scripts": {
+        "start": "bun run app/main.ts",
+        "dev": "bun run app/main.ts",
+        "test": "codecrafters test"
+    },
+    "devDependencies": {
+        "@types/bun": "latest"
+    }
 }
