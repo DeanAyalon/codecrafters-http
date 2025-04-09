@@ -1,6 +1,7 @@
-import { Socket } from 'net'
 import { STATUS_CODES } from 'http'
 import { Buffer } from 'buffer'
+
+import { encode } from '../encode'
 
 const version = 1.1,
     contentType = {
@@ -10,17 +11,22 @@ const version = 1.1,
 
 export class Response {
     constructor(private code: number | string, private payload?) {
-        this._contentType = typeof payload === 'string' ? contentType.text : contentType.other
+        if (typeof payload === 'string') this._contentType = contentType.text
+        else this._contentType = contentType.other
     }
 
     private _contentType: string
     get contentType() { return this._contentType }
-
+    
     private _encoding?: string
-    set encoding(encoding: string) { this._encoding = encoding }
+    private payloadEncoded
+    set encoding(encoding: string) { 
+        this._encoding = encoding 
+        this.payloadEncoded = encode(this.payload, encoding)
+    }
 
     /** The Content-Length of the response message, in bytes */
-    length() { return Buffer.byteLength(this.payload) }
+    length() { return Buffer.byteLength(this._encoding ? this.payloadEncoded : this.payload)}
 
     headers() {
         const headers = [`HTTP/${version} ${this.code} ${STATUS_CODES[this.code]}`,
@@ -31,22 +37,12 @@ export class Response {
         headers.push('', '') // Header-body separator
         return headers.join('\r\n')
     }
-    payloadBuffer() { 
-        return Buffer.isBuffer(this.payload) ? this.payload : Buffer.from(this.payload)
+    payloadBuffer() {
+        let payload = this.encoding ? this.payloadEncoded : this.payload
+
+        if (this._encoding) payload = encode(payload, this._encoding)
+        let buffer = Buffer.isBuffer(payload) ? payload : Buffer.from(payload)
+
+        return buffer
     }
-}
-
-export type ResponseOptions = Partial<{ encoding: string }>
-export type Respond = (code: number | string, payload?) => void
-export function respond(socket: Socket, code: number | string, payload?, options?: ResponseOptions) {
-    console.log('->', socket.remoteAddress, code, payload)
-    const response = new Response(code, payload)
-    if (options?.encoding) response.encoding = options.encoding
-    
-    const headers = response.headers(), body = response.payloadBuffer()
-    console.log('  ', response.contentType, response.length(), 'bytes')
-
-    socket.write(headers)
-    socket.write(new Uint8Array(body))
-    socket.end()
 }
