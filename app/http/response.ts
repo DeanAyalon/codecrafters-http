@@ -32,7 +32,8 @@ export class Response {
     }
 }
 
-export function  respond(socket: Socket, code: number | string, payload?: any) {
+export type Respond = (code: number | string, payload?) => void
+export function respond(socket: Socket, code: number | string, payload?) {
     console.log('->', socket.remoteAddress, code, payload)
     // console.log('->', socket.remoteAddress, code, (typeof payload === 'string' ? payload : '<binary>'))
     const response = new Response(code, payload),
