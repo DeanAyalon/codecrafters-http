@@ -1,4 +1,5 @@
 import { STATUS_CODES } from 'http'
+import { Buffer } from 'buffer'
 
 const version = 1.1
 
@@ -7,7 +8,10 @@ export class HttpResponse {
     toString() {
         return [`HTTP/${version} ${this.code} ${STATUS_CODES[this.code]}`,
             'Content-Type: text/plain', 
+            'Content-Length: ' + this.length(),
             // Headers end
-            , this.message, this.code].join('\r\n')
+            , this.message].join('\r\n')
     }
+
+    length() { return this.message ? Buffer.byteLength(this.message) : 0 }
 }
