@@ -9,9 +9,14 @@ export abstract class Request {
 
     static headers(data: string) {
         const lines = data.toString().split('\r\n'),
-            headers: { [header: string]: string } = lines.slice(1, lines.length - 2)
-                .map(line => line.split(': '))
-                .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
+            headerArray = lines.slice(1, lines.length - 2).map(line => line.split(': '))
+        const headers = {}
+        for (const [key, value] of headerArray) {
+            if (headers[key]) {
+                if (Array.isArray(headers[key])) headers[key].push(value)
+                else headers[key] = [headers[key], value]
+            } else headers[key] = value
+        }
         return headers
     }
 }

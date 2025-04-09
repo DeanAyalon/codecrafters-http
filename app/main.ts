@@ -3,8 +3,9 @@ import { argv } from 'process'
 
 import { Request } from './http/request'
 import { respond as _respond } from './http/response'
-import type { Respond } from './http/response'
+import type { Respond, ResponseOptions } from './http/response'
 import { synthasizeArguments } from './args'
+import { selectEncoding } from './encode'
 
 import { files } from './files'
 
@@ -18,7 +19,12 @@ server.on('connection', socket => {
     socket.on('data', data => {
         const request = data.toString(),
             { method, url, path } = Request.title(request), // Parse first request line
-            respond: Respond = (code: number | string, payload?) => _respond(socket, code, payload)
+            headers = Request.headers(request) // Parse headers
+
+            const responseOpts: ResponseOptions = {}, encoding = selectEncoding(headers['Accept-Encoding'])
+            if (encoding) responseOpts.encoding = encoding
+
+            const respond: Respond = (code, payload?) => _respond(socket, code, payload, responseOpts)
 
         console.log(socket.remoteAddress, method, url)
 
