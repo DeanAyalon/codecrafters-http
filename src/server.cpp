@@ -52,9 +52,17 @@ int main(int argc, char **argv) {
     int client_addr_len = sizeof(client_addr);
     std::cout << "Waiting for a client to connect...\n";
 
-    accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len); 
-    //                                               *char     .s_addr = IP as binary (32b)
-    std::cout << "Client connected - " + std::string(inet_ntoa(client_addr.sin_addr)) + "\n";
+    int client_fd = accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len); 
+    //                                  .s_addr = IP as binary (32b)
+    char *ipv4 = inet_ntoa(client_addr.sin_addr);
+    std::cout << "Client connected - " + std::string(ipv4) + "\n";
+    
+    std::string response = "HTTP/1.1 200 OK\r\n\r\n";
+    //              Returns a char* from the str       options
+    send(client_fd, response.c_str(), response.size(), 0);
+    std::cout << "-> " + std::string(ipv4) + " 200\n";
+
+    // close(client_fd);
     close(server_fd);
     return 0;
 }
