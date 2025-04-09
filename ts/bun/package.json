@@ -1,0 +1,29 @@
+{
+    "name": "@deanayalon/codecrafters-http-js",
+    "version": "0.1",
+    "description": "CodeCrafters' HTTP server in TypeScript",
+    "author": {
+        "name": "Dean Ayalon",
+        "email": "dev@deanayalon.com",
+        "url": "https://github.com/deanayalon"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/deanayalon/codecrafters-http.git"
+    },
+    "bugs": {
+        "email": "dev@deanayalon.com",
+        "url": "https://github.com/deanayalon/codecrafters-http/issues"
+    },
+    "license": "MIT",
+    "type": "module",
+    "main": "app/main.js",
+    "scripts": {
+        "start": "bun run app/main.ts",
+        "dev": "bun run app/main.ts",
+        "test": "codecrafters test"
+    },
+    "devDependencies": {
+        "@types/bun": "latest"
+    }
+}

@@ -1,0 +1,18 @@
+name: codecrafters
+services:
+  http:
+    container_name: http
+    image: deanayalon/codecrafters-http:ts.2
+    build: 
+      tags: [ghcr.io/deanayalon/codecrafters-http:ts.2]
+    develop:
+      watch:
+        - path: ./app
+          action: rebuild
+        - path: ./Dockerfile
+          action: rebuild
+    stop_grace_period: 0s
+    ports:
+      - 4221:4221
+    volumes:
+      - ./files:/app/files/
