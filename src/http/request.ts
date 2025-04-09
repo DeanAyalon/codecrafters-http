@@ -15,7 +15,7 @@ export class Request {
     headers: { [header: string]: string | string[] } // Not many supported yet
     body: string    // Only strings supported currently
 
-    constructor(data: Buffer<ArrayBufferLike>, private socket: net.Socket) {
+    constructor(data: Buffer, private socket: net.Socket) {
         // Title
         [this.header, this.body] = data.toString().split(crlf + crlf)
         const lines = this.header.toString().split(crlf);
@@ -47,7 +47,7 @@ export class Request {
         console.log(body)
 
         this.socket.write(headers)
-        this.socket.write(body)
+        this.socket.write(new Uint8Array(body))
         this.socket.end()
     }
 }

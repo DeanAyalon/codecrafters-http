@@ -1,6 +1,6 @@
 services:
-  js-http:  
-    container_name: http-ts
+  http:  
+    container_name: http
     image: deanayalon/codecrafters-http:ts
     build: 
       tags: [ghcr.io/deanayalon/codecrafters-http:ts]
