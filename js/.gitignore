@@ -1,0 +1,8 @@
+# Dependencies
+node_modules
+
+# Compiled JavaScript
+app
+
+# Mounts
+files
