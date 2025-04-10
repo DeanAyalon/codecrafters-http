@@ -12,5 +12,5 @@ BraceWrapping:
 
 IndentWidth: 4
 UseTab: Never
-
 ColumnLimit: 0
+IndentCaseLabels: true
