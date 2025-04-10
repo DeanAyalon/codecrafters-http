@@ -52,9 +52,10 @@ int main(int argc, char **argv) {
 
     // Routing
     vector<string> path = request->getPath();
-    if (path.size() == 0) request->respond(new Response(200, "Welcome"), 0);
-    else if (path[0] == "echo") request->respond(new Response(200, path[1]), 0);
-    else request->respond(new Response(404, request->fullPath() + " not found"), 0);
+    if (path.size() == 0) request->respond(200, "Welcome");
+    else if (path[0] == "echo") request->respond(200, path[1]);
+    else if (path[0] == "user-agent") request->respond(200, request->getHeader("User-Agent")[0]);
+    else request->respond(404, request->fullPath() + " not found");
 
     close(server_fd);
     return 0;
