@@ -19,10 +19,9 @@ string Request::ip() {
     return string(inet_ntoa(client_addr.sin_addr));
 }
 
-void Request::accept(int server_fd) {
-    socklen_t len = sizeof(client_addr); // Must be declared in memory for there to be a pointer to give ::accept()
-    //          global-scoped (from socket.h)
-    client_fd = ::accept(server_fd, (struct sockaddr *)&client_addr, &len);
+void Request::accept(int client, sockaddr_in *address) {
+    client_fd = client;
+    this->client_addr = *address;
 
     // Read contents
     char buffer[BUFFER_SIZE] = {0}; // 1MB
@@ -36,7 +35,7 @@ void Request::accept(int server_fd) {
     vector<string> title = split(headerLines[0], " ");
     method = title[0];
     path = title[1];
-    pathComponents = filter(split(path, "/"), "");
+    path_components = filter(split(path, "/"), "");
     for (int i = 1; i < headerLines.size(); i++) {
         const vector<string> line = split(headerLines[i], ": ");
         if (line.size() < 2) continue; // skip malformed lines
@@ -63,7 +62,7 @@ void Request::respond(Response *response, int options) {
     send(client_fd, msg.c_str(), msg.size(), options);
 }
 
-vector<string> Request::getPath() { return pathComponents; }
-string Request::fullPath() { return path; }
+vector<string> Request::get_path() { return path_components; }
+string Request::full_path() { return path; }
 
-vector<string> Request::getHeader(string key) { return headers[key]; }
+vector<string> Request::header(string key) { return headers[key]; }

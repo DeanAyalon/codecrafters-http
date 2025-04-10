@@ -7,11 +7,27 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <thread>
 
 #include "http/request.hpp"
 #include "http/response.hpp"
 #include "utils/console.hpp"
 #include "utils/str.hpp"
+
+struct sockaddr_in accepted_addr;
+socklen_t length = sizeof(accepted_addr); // Must be declared in memory for there to be a pointer to give ::accept()
+
+void handle_request(int client) {
+    Request *request = new Request();
+    request->accept(client, &accepted_addr);
+
+    // Routing
+    vector<string> path = request->get_path();
+    if (path.size() == 0) request->respond(200, "Welcome");
+    else if (path[0] == "echo") request->respond(200, path[1]);
+    else if (path[0] == "user-agent") request->respond(200, request->header("User-Agent")[0]);
+    else request->respond(404, request->full_path() + " not found");
+}
 
 int main(int argc, char **argv) {
     // Flush after every cout / cerr
@@ -40,23 +56,19 @@ int main(int argc, char **argv) {
     //  globally-scoped   Not primitive - instanciate
     if (::bind(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) != 0)
         return error("Failed to bind to port 4221");
+    log("Listening on port 4221");
 
     int connection_backlog = 5; // Max pending connections
     if (listen(server_fd, connection_backlog) != 0)
         return error("Listen failed");
 
-    Request *request = new Request();
-    log("Waiting for a client to connect...");
-
-    request->accept(server_fd);
-
-    // Routing
-    vector<string> path = request->getPath();
-    if (path.size() == 0) request->respond(200, "Welcome");
-    else if (path[0] == "echo") request->respond(200, path[1]);
-    else if (path[0] == "user-agent") request->respond(200, request->getHeader("User-Agent")[0]);
-    else request->respond(404, request->fullPath() + " not found");
-
+    while (true) {
+        const int client = accept(server_fd, (struct sockaddr *)&accepted_addr, &length);
+        //            () => handle_request(client)
+        std::thread t([client]() { handle_request(client); });
+        t.join();
+    }
+    
     close(server_fd);
     return 0;
 }
