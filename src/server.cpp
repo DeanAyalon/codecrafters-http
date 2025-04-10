@@ -10,9 +10,9 @@
 #include <thread>
 
 #include "http/request.hpp"
-#include "http/response.hpp"
 #include "utils/console.hpp"
-#include "utils/str.hpp"
+#include "utils/utils.hpp"
+#include "files.hpp"
 
 struct sockaddr_in accepted_addr;
 socklen_t length = sizeof(accepted_addr); // Must be declared in memory for there to be a pointer to give ::accept()
@@ -26,6 +26,7 @@ void handle_request(int client) {
     if (path.size() == 0) request->respond(200, "Welcome");
     else if (path[0] == "echo") request->respond(200, path[1]);
     else if (path[0] == "user-agent") request->respond(200, request->header("User-Agent")[0]);
+    else if (path[0] == "files") files(request);
     else request->respond(404, request->full_path() + " not found");
 
     close(client);
@@ -35,6 +36,14 @@ int main(int argc, char **argv) {
     // Flush after every cout / cerr
     std::cout << std::unitbuf;
     std::cerr << std::unitbuf;
+
+    const int dir_pos = arr::position(argv, argc, "--directory");
+    string files_dir;
+    if (dir_pos > -1 && argc > dir_pos + 1) files_dir = argv[dir_pos + 1];
+    else {
+        files_dir = "./files";
+        log("--directory not specified, using ./files as default file directory");
+    }
 
     //  file descriptor    IPv4     TCP          Default protocol
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -55,7 +64,7 @@ int main(int argc, char **argv) {
     server_addr.sin_addr.s_addr = INADDR_ANY; // 0.0.0.0
     server_addr.sin_port = htons(4221);       // int16
 
-    //  globally-scoped   Not primitive - instanciate
+    //  Globally-scoped    Type casting
     if (::bind(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) != 0)
         return error("Failed to bind to port 4221");
     log("Listening on port 4221");

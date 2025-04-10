@@ -8,6 +8,8 @@ services:
       watch:
         - path: src
           action: rebuild
+    stop_grace_period: 0s
     ports:
       - 4221:4221
-    stop_grace_period: 0s
+    volumes:
+      - ./files:/app/files

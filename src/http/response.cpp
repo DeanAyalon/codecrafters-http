@@ -1,14 +1,15 @@
 #include "response.hpp"
 
 #include <sys/socket.h>
+#include <vector>
 
 #include "../utils/console.hpp"
+#include "../utils/utils.hpp"
 
 using std::string;
 using std::to_string;
 
 const string VERSION = "1.1";
-const string CRLF = "\r\n";
 
 //                             Pointer to this occurence's code in memory
 Response::Response(int code) { this->code = code; }
@@ -19,13 +20,15 @@ Response::Response(int code, string message) {
 }
 
 string Response::headers() {
-    string headers = "HTTP/" + VERSION + " " + to_string(code) + " " + status() + CRLF;
-    //                                                                            in bytes
-    if (!message.empty()) headers += "Content-Length: " + to_string(this->message.size()) + CRLF;
-    if (!contentType.empty()) headers += "Content-Type: " + contentType + CRLF;
-    headers += CRLF;
-    // log(headers);
-    return headers;
+    std::vector<string> headers_vector;
+    headers_vector.push_back("HTTP/" + VERSION + " " + to_string(code) + " " + status());
+    if (!message.empty()) headers_vector.push_back("Content-Length: " + to_string(this->message.size()));
+    if (!contentType.empty()) headers_vector.push_back("Content-Type: " + contentType);
+
+    // Header-body separator
+    headers_vector.push_back("");
+    headers_vector.push_back("");
+    return vec::join(headers_vector, "\r\n");
 }
 
 int Response::getCode() { return code; }
@@ -39,6 +42,8 @@ string Response::status() {
             return "OK";
         case 404:
             return "Not Found";
+        case 503:
+            return "Service Unavailable";
         default:
             return to_string(code);
     }

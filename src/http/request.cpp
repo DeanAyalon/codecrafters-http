@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "../utils/console.hpp"
-#include "../utils/str.hpp"
+#include "../utils/utils.hpp"
 
 #define BUFFER_SIZE 1024
 
@@ -30,12 +30,13 @@ void Request::accept(int client, sockaddr_in *address) {
     contents = string(buffer);
 
     // Analyze header
+    using str::split;
     string header = split(contents, "\r\n\r\n")[0];
     vector<string> headerLines = split(header, "\r\n");
     vector<string> title = split(headerLines[0], " ");
     method = title[0];
     path = title[1];
-    path_components = filter(split(path, "/"), "");
+    path_components = vec::filter(split(path, "/"), "");
     for (int i = 1; i < headerLines.size(); i++) {
         const vector<string> line = split(headerLines[i], ": ");
         if (line.size() < 2) continue; // skip malformed lines
