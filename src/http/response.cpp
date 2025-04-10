@@ -1,6 +1,5 @@
 #include "response.hpp"
 
-#include <iostream>
 #include <sys/socket.h>
 
 // #define VERSION "1.1"
@@ -26,7 +25,6 @@ string Response::status() {
         case 200:
             return "OK";
         case 404:
-            std::cout << "404";
             return "Not Found";
         default:
             return to_string(code);

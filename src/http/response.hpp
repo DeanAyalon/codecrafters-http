@@ -1,14 +1,16 @@
 #pragma once
 
-#include <iostream>
+#include <string>
+
+using std::string;
 
 class Response {
   public:
     Response(int code);
-    std::string headers();
+    string headers();
     int getCode();
 
   private:
     int code;
-    std::string status();
+    string status();
 };
