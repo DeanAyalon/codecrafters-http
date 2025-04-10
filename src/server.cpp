@@ -16,6 +16,7 @@
 
 struct sockaddr_in accepted_addr;
 socklen_t length = sizeof(accepted_addr); // Must be declared in memory for there to be a pointer to give ::accept()
+string files_dir;
 
 void handle_request(int client) {
     Request *request = new Request();
@@ -26,7 +27,7 @@ void handle_request(int client) {
     if (path.size() == 0) request->respond(200, "Welcome");
     else if (path[0] == "echo") request->respond(200, path[1]);
     else if (path[0] == "user-agent") request->respond(200, request->header("User-Agent")[0]);
-    else if (path[0] == "files") files(request);
+    else if (path[0] == "files") files(request, files_dir);
     else request->respond(404, request->full_path() + " not found");
 
     close(client);
@@ -38,7 +39,6 @@ int main(int argc, char **argv) {
     std::cerr << std::unitbuf;
 
     const int dir_pos = arr::position(argv, argc, "--directory");
-    string files_dir;
     if (dir_pos > -1 && argc > dir_pos + 1) files_dir = argv[dir_pos + 1];
     else {
         files_dir = "./files";

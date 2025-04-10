@@ -3,6 +3,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <vector>
+#include <fstream>
 
 #include "../utils/console.hpp"
 #include "../utils/utils.hpp"
@@ -54,12 +55,35 @@ void Request::accept(int client, sockaddr_in *address) {
 void Request::respond(int code, string message) { respond(new Response(code, message), 0); }
 void Request::respond(Response *response, int options) {
     string headers = response->headers();
-    string msg = response->getMessage();
-    log(std::to_string(response->getCode()) + " -> " + ip() + (msg.empty() ? "" : ":"));
+    string msg = response->msg();
+    log(std::to_string(response->get_code()) + " -> " + ip() + (msg.empty() ? "" : ":"));
     if (!msg.empty()) log(msg);
     //              Returns a char* from the str
     send(client_fd, headers.c_str(), headers.size(), options);
     send(client_fd, msg.c_str(), msg.size(), options);
+}
+void Request::respond(int code, std::ifstream *file) {
+    // Header
+    Response *response = new Response(code, file);
+    string headers = response->headers();
+    
+    log(std::to_string(response->get_code()) + " -> " + ip() + " (file)");
+    send(client_fd, headers.c_str(), headers.size(), 0);
+
+    // Body
+    char buffer[BUFFER_SIZE];
+    //     false when reached EOF with unfilled buffer
+    while (file->read(buffer, BUFFER_SIZE) || file->gcount() > 0) {
+        ssize_t bytes_read = file->gcount();
+        ssize_t bytes_sent = 0;
+
+        // Send the data through the client socket
+        while (bytes_sent < bytes_read) {
+            ssize_t result = send(client_fd, buffer + bytes_sent, bytes_read - bytes_sent, 0);
+            if (result == -1) { throw "Error writing to socket."; }
+            bytes_sent += result;
+        }
+    }
 }
 
 vector<string> Request::get_path() { return path_components; }

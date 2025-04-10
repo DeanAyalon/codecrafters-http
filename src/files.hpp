@@ -2,4 +2,4 @@
 
 #include "http/request.hpp"
 
-void files(Request *request);
+void files(Request *request, string files_dir);

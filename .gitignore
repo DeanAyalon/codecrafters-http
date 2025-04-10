@@ -4,6 +4,9 @@
 # IDE
 .vscode
 
+# Mounts
+files
+
 # Prerequisites
 *.d
 
