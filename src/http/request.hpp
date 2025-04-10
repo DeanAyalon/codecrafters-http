@@ -15,6 +15,7 @@ class Request {
     void accept(int server_fd);
     void respond(Response *response, int options);
     vector<string> getPath();
+    string fullPath();
 
   private:
     sockaddr_in client_addr;

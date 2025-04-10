@@ -51,8 +51,10 @@ int main(int argc, char **argv) {
     request->accept(server_fd);
 
     // Routing
-    if (request->getPath().size() == 0) request->respond(new Response(200), 0);
-    else request->respond(new Response(404), 0);
+    vector<string> path = request->getPath();
+    if (path.size() == 0) request->respond(new Response(200, "Welcome"), 0);
+    else if (path[0] == "echo") request->respond(new Response(200, path[1]), 0);
+    else request->respond(new Response(404, request->fullPath() + " not found"), 0);
 
     close(server_fd);
     return 0;

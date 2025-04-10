@@ -43,9 +43,13 @@ void Request::accept(int server_fd) {
 
 void Request::respond(Response *response, int options) {
     string headers = response->headers();
-    log(std::to_string(response->getCode()) + " -> " + ip());
+    string msg = response->getMessage();
+    log(std::to_string(response->getCode()) + " -> " + ip() + (msg.empty() ? "" : ":"));
+    if (!msg.empty()) log(msg);
     //              Returns a char* from the str
     send(client_fd, headers.c_str(), headers.size(), options);
+    send(client_fd, msg.c_str(), msg.size(), options);
 }
 
 vector<string> Request::getPath() { return pathComponents; }
+string Request::fullPath() { return path; }
