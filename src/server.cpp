@@ -27,6 +27,8 @@ void handle_request(int client) {
     else if (path[0] == "echo") request->respond(200, path[1]);
     else if (path[0] == "user-agent") request->respond(200, request->header("User-Agent")[0]);
     else request->respond(404, request->full_path() + " not found");
+
+    close(client);
 }
 
 int main(int argc, char **argv) {
@@ -66,7 +68,7 @@ int main(int argc, char **argv) {
         const int client = accept(server_fd, (struct sockaddr *)&accepted_addr, &length);
         //            () => handle_request(client)
         std::thread t([client]() { handle_request(client); });
-        t.join();
+        t.detach();
     }
     
     close(server_fd);

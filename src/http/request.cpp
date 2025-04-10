@@ -55,8 +55,7 @@ void Request::respond(Response *response, int options) {
     string headers = response->headers();
     string msg = response->getMessage();
     log(std::to_string(response->getCode()) + " -> " + ip() + (msg.empty() ? "" : ":"));
-    if (!msg.empty())
-        log(msg);
+    if (!msg.empty()) log(msg);
     //              Returns a char* from the str
     send(client_fd, headers.c_str(), headers.size(), options);
     send(client_fd, msg.c_str(), msg.size(), options);
