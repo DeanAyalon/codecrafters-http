@@ -1,0 +1,15 @@
+services:
+  http:
+    container_name: http-cpp
+    image: deanayalon/codecrafters-http:cpp
+    build: 
+      tags: [ghcr.io/deanayalon/codecrafters-http:cpp]
+    develop:
+      watch:
+        - path: src
+          action: rebuild
+    stop_grace_period: 0s
+    ports:
+      - 4221:4221
+    volumes:
+      - ./files:/app/files
