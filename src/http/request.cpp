@@ -7,6 +7,7 @@
 
 #include "../utils/console.hpp"
 #include "../utils/utils.hpp"
+#include "../encode.hpp"
 
 #define BUFFER_SIZE 1024
 
@@ -51,12 +52,18 @@ void Request::accept(int client, sockaddr_in *address) {
 
         for (const auto &value : values) headers[key].push_back(value);
     }
+    // Encodings
+    vector<string> encodings = split(vec::join(headers["Accept-Encoding"], ","), ",");  // Merge rows
+    for (auto &&encoding : encodings) encoding = str::filter(encoding, " ");            // Remove spaces
+    encodings = vec::filter(encodings, "");                                             // Remove empty values
+    headers["Accept-Encoding"] = encodings;
+    encoding = selectEncoding(encodings);
 
     // Log
     log(ip() + " -> " + method + " " + path);
 }
 
-void Request::respond(int code, string message) { respond(new Response(code, message), 0); }
+void Request::respond(int code, string message) { respond(new Response(code, message, encoding), 0); }
 void Request::respond(Response *response, int options) {
     string headers = response->headers();
     string msg = response->msg();
@@ -68,7 +75,7 @@ void Request::respond(Response *response, int options) {
 }
 void Request::respond(int code, std::ifstream *file) {
     // Header
-    Response *response = new Response(code, file);
+    Response *response = new Response(code, file, encoding);
     string headers = response->headers();
     
     log(std::to_string(response->get_code()) + " -> " + ip() + " (file)");

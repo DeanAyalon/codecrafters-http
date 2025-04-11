@@ -32,4 +32,5 @@ class Request {
     vector<string> path_components;
     std::map<string, vector<string>> headers;
     string body;
+    string encoding;
 };

@@ -8,9 +8,8 @@ using std::ifstream;
 
 class Response {
   public:
-    Response(int code);
-    Response(int code, string message);
-    Response(int code, ifstream *file);
+    Response(int code, string message = "", string encoding = "");
+    Response(int code, ifstream *file, string encoding = "");
     string headers();
     int get_code();
     string msg();
@@ -22,4 +21,5 @@ class Response {
 
     string status();
     string content_type;
+    string encoding;
 };

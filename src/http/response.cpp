@@ -11,36 +11,43 @@ using std::to_string;
 
 const string VERSION = "1.1";
 
-//                             Pointer to this occurence's code in memory
-Response::Response(int code) { this->code = code; }
-Response::Response(int code, string message) {
+//                           default ""      default ""
+Response::Response(int code, string message, string encoding) {
+    // Pointer to this occurence's code in memory
     this->code = code;
-    content_type = "text/plain";
-    this->message = message;
+    if (!message.empty()) {
+        content_type = "text/plain";
+        this->message = message;
+    }
+    this->encoding = encoding;
     file = nullptr;
 }
-Response::Response(int code, std::ifstream *file) {
+//                                                default ""
+Response::Response(int code, std::ifstream *file, string encoding) {
     this->code = code;
     content_type = "application/octet-stream";
     this->file = file;
+    this->encoding = encoding;
 }
 
 string Response::headers() {
     std::vector<string> headers_vector;
     headers_vector.push_back("HTTP/" + VERSION + " " + to_string(code) + " " + status());
     if (!content_type.empty()) headers_vector.push_back("Content-Type: " + content_type);
-    if (!message.empty()) headers_vector.push_back("Content-Length: " + to_string(this->message.size()));
+    if (!message.empty()) headers_vector.push_back("Content-Length: " + to_string(message.size()));
     if (file != nullptr && file->is_open()) {
         file->seekg(0, std::ios::end); // Move the file pointer to the end
         std::streampos fileSize = file->tellg();
         headers_vector.push_back("Content-Length: " + to_string(fileSize));
         file->seekg(0, std::ios::beg); // Move back to the beginning to read it
     }
+    if (!encoding.empty()) headers_vector.push_back("Content-Encoding: " + encoding);
 
     // Header-body separator
     headers_vector.push_back("");
     headers_vector.push_back("");
 
+    log(vec::join(headers_vector, "\r\n"));
     return vec::join(headers_vector, "\r\n");
 }
 
