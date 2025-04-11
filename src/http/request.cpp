@@ -30,9 +30,13 @@ void Request::accept(int client, sockaddr_in *address) {
         throw "Message receival failed";
     contents = string(buffer);
 
-    // Analyze header
+    // Separate request content
     using str::split;
-    string header = split(contents, "\r\n\r\n")[0];
+    vector<string> parts = split(contents, "\r\n\r\n", 1);
+    const string header = parts[0];
+    body = parts[1];
+    
+    // Analyze header
     vector<string> headerLines = split(header, "\r\n");
     vector<string> title = split(headerLines[0], " ");
     method = title[0];
@@ -88,5 +92,6 @@ void Request::respond(int code, std::ifstream *file) {
 
 vector<string> Request::get_path() { return path_components; }
 string Request::full_path() { return path; }
-
 vector<string> Request::header(string key) { return headers[key]; }
+string Request::get_method() { return method; }
+string Request::get_body() { return body; }

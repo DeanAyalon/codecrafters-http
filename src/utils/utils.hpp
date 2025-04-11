@@ -6,7 +6,7 @@ using std::string;
 using std::vector;
 
 namespace str {
-vector<string> split(const string &input, const string &delimiter);
+vector<string> split(const string &input, const string &delimiter, const int limit = -1);
 } // namespace str
 
 namespace vec {

@@ -7,14 +7,17 @@ using std::vector; // Array of unknown length
 
 namespace str {
 
-vector<string> split(const string &input, const string &delimiter) {
+vector<string> split(const string &input, const string &delimiter, const int limit = -1) {
     vector<string> parts;
     size_t start = 0, end;
+    int splits = 0;
     //                                                     Not found
-    while ((end = input.find(delimiter, start)) != string::npos) {
+    while ((end = input.find(delimiter, start)) != string::npos
+            && (splits < limit || limit < 0)) {
         //                                  length (not end position)
         parts.push_back(input.substr(start, end - start));
         start = end + delimiter.length();
+        splits++;
     }
     parts.push_back(input.substr(start)); // add the last part
     return parts;

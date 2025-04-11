@@ -20,6 +20,8 @@ class Request {
     vector<string> get_path();
     string full_path();
     vector<string> header(string key);
+    string get_method();
+    string get_body();
 
   private:
     sockaddr_in client_addr;
@@ -29,4 +31,5 @@ class Request {
     string path;
     vector<string> path_components;
     std::map<string, vector<string>> headers;
+    string body;
 };
