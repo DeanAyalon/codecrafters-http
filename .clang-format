@@ -15,3 +15,5 @@ UseTab: Never
 ColumnLimit: 0
 IndentCaseLabels: true
 AllowShortIfStatementsOnASingleLine: true
+AllowShortBlocksOnASingleLine: Always
+AllowShortFunctionsOnASingleLine: Inline

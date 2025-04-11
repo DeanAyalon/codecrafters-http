@@ -10,6 +10,7 @@
 #include "../encode.hpp"
 
 #define BUFFER_SIZE 1024
+#define ENCODINGS "Accept-Encoding"
 
 using std::string;
 using std::vector;
@@ -53,18 +54,18 @@ void Request::accept(int client, sockaddr_in *address) {
         for (const auto &value : values) headers[key].push_back(value);
     }
     // Encodings
-    vector<string> encodings = split(vec::join(headers["Accept-Encoding"], ","), ",");  // Merge rows
-    for (auto &&encoding : encodings) encoding = str::filter(encoding, " ");            // Remove spaces
-    encodings = vec::filter(encodings, "");                                             // Remove empty values
-    headers["Accept-Encoding"] = encodings;
-    encoding = selectEncoding(encodings);
+    vector<string> encodings = split(vec::join(headers[ENCODINGS], ","), ",");  // Merge rows
+    for (auto &&encoding : encodings) encoding = str::filter(encoding, " ");    // Remove spaces
+    encodings = vec::filter(encodings, "");                                     // Remove empty values
+    headers[ENCODINGS] = encodings;
 
     // Log
     log(ip() + " -> " + method + " " + path);
 }
 
-void Request::respond(int code, string message) { respond(new Response(code, message, encoding), 0); }
-void Request::respond(Response *response, int options) {
+//                              default ""            default 0
+void Request::respond(int code, const string message, const int options) { 
+    Response *response = new Response(code, message, headers[ENCODINGS]);
     string headers = response->headers();
     string msg = response->msg();
     log(std::to_string(response->get_code()) + " -> " + ip() + (msg.empty() ? "" : ":"));
@@ -73,9 +74,9 @@ void Request::respond(Response *response, int options) {
     send(client_fd, headers.c_str(), headers.size(), options);
     send(client_fd, msg.c_str(), msg.size(), options);
 }
-void Request::respond(int code, std::ifstream *file) {
+void Request::respond(int code, std::ifstream *file, const int options) {
     // Header
-    Response *response = new Response(code, file, encoding);
+    Response *response = new Response(code, file, headers[ENCODINGS]);
     string headers = response->headers();
     
     log(std::to_string(response->get_code()) + " -> " + ip() + " (file)");
