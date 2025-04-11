@@ -14,9 +14,8 @@ class Request {
     Request();
     string ip();
     void accept(int client, sockaddr_in *address);
-    void respond(int code, string message);
-    void respond(Response *response, int options);
-    void respond(int code, std::ifstream *file);
+    void respond(int code, const string message = "", const int options = 0);
+    void respond(int code, std::ifstream *file, const int options = 0);
     vector<string> get_path();
     string full_path();
     vector<string> header(string key);

@@ -1,3 +1,5 @@
+#include "utils.hpp"
+
 #include <string>
 #include <vector>
 #include <cstring>
@@ -6,8 +8,8 @@ using std::string;
 using std::vector; // Array of unknown length
 
 namespace str {
-
-vector<string> split(const string &input, const string &delimiter, const int limit = -1) {
+//                                                                 Default -1 (no limit)
+vector<string> split(const string &input, const string &delimiter, const int limit) {
     vector<string> parts;
     size_t start = 0, end;
     int splits = 0;
@@ -21,6 +23,17 @@ vector<string> split(const string &input, const string &delimiter, const int lim
     }
     parts.push_back(input.substr(start)); // add the last part
     return parts;
+}
+
+string filter(const string &original, const string &filter) {
+    if (filter.empty()) return original;
+    
+    string result = original;
+    size_t pos;
+    while ((pos = result.find(filter)) != std::string::npos) 
+        result.erase(pos, filter.length());
+
+    return result;
 }
 
 } // namespace str
